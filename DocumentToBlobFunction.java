@@ -33,5 +33,40 @@ public final class DocumentToBlobFunction extends ScriptableFunctionBase {
     public static final String NAME = "documentToBlob";
     public static final String DEFAULT_ENCODING = "UTF-16BE";
 
-    
+    /**
+     * Supported in 5.0.0 only. Convert a document into a Blob If encoding information is not known, UTF-16BE encoding will be
+     * used by default. BlackBerry supports the following character encodings: "ISO-8859-1", "UTF-8", "UTF-16BE", "US-ASCII".
+     * 
+     *@param thiz
+     *            Context where this function was called.
+     * @param args
+     *            args[0]: the document to be converted.
+     * @return a Blob representation of the document.
+     */
+    public Object execute( Object thiz, Object[] args ) throws Exception {
+        String versionString = DeviceInfo.getSoftwareVersion();
+        if( versionString.length() == 0 ) { // return UNDEFINED if version number cannot be retrieved
+            return UNDEFINED;
+        } else {
+            int versionNumber = Integer.parseInt( ( StringUtilities.split( versionString, "." ) )[ 0 ] );
+            if( versionNumber > 5 ) { // return UNDEFINED if version number > 5
+                return UNDEFINED;
+            } else {
+                Document dom = (Document) args[ 0 ];
+                String domStr = ( (DOMImplementationLS) dom.getImplementation() ).createLSSerializer().writeToString( dom );
+                String encoding = ( dom.getInputEncoding() == null ) ? DEFAULT_ENCODING : dom.getInputEncoding();
+                byte[] data = domStr.getBytes( encoding );
+                return new WidgetBlob( data );
+            }
+        }
+    }
+
+    /**
+     * @see blackberry.core.ScriptableFunctionBase#getFunctionSignatures()
+     */
+    protected FunctionSignature[] getFunctionSignatures() {
+        FunctionSignature fs = new FunctionSignature( 1 );
+        fs.addParam( Document.class, true );
+        return new FunctionSignature[] { fs };
+    }
 }

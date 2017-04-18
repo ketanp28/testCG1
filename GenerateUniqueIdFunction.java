@@ -25,5 +25,16 @@ public final class GenerateUniqueIdFunction extends ScriptableFunctionBase {
 
     public static final String NAME = "generateUniqueId";
 
-    
+    /**
+     * A function that generates 32-bit unique IDs that can be used for synchronization or any other purpose.
+     * 
+     * @param thiz
+     *            Context where this function was called.
+     * @param args
+     * 
+     * @return An unique integer object
+     */
+    public Object execute( Object thiz, Object[] args ) throws Exception {
+        return new Integer( UIDGenerator.getUID() );
+    }
 }

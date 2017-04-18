@@ -42,7 +42,20 @@ public final class BlobToStringFunction extends ScriptableFunctionBase {
     public Object execute( Object thiz, Object[] args ) throws Exception {
         byte[] data = ( (Blob) ( args[ 0 ] ) ).getBytes();
 
-        
+        String encoding = null;
+        if( args.length == 2 ) {
+            encoding = args[ 1 ].toString();
+        }
+
+        if( encoding == null ) {
+            return new String( data );
+        }
+
+        if( encoding.equalsIgnoreCase( BASE64_ENCODING ) ) {
+            byte[] encoded = Base64OutputStream.encode( data, 0, data.length, false, false );
+            String encodedStr = new String( encoded, UTF8_ENCODING );
+            return encodedStr;
+        }
 
         return new String( data, encoding );
     }

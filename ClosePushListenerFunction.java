@@ -27,7 +27,12 @@ class ClosePushListenerFunction extends ScriptableFunctionBase {
      * @see ScriptableFunctionBase#execute(Object, Object[])
      */
     protected Object execute( Object thiz, Object[] args ) throws Exception {
-        
+        if( args != null && args.length > 0 ) {
+            int port = ( (Integer) args[ 0 ] ).intValue();
+            PushService.getInstance().closePushChannel( port );
+        } else {
+            PushService.getInstance().closePushChannel();
+        }
         return UNDEFINED;
     }
 

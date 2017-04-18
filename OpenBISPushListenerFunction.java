@@ -37,14 +37,20 @@ public class OpenBISPushListenerFunction extends ScriptableFunctionBase {
     protected Object execute( Object thiz, Object[] args ) throws Exception {
 
         Scriptable obj = (Scriptable) args[ 0 ];
-        
+        int port = ( (Integer) obj.getField( KEY_PORT ) ).intValue();
         String appId = obj.getField( KEY_APP_ID ).toString();
         String serverUrl = obj.getField( KEY_SERVER_URL ).toString();
         String wakeUpPage = obj.getField( KEY_WAKEUP_PAGE ).toString();
         int maxQueueCap = 0;
         Object maxQueueCapObj = obj.getField( KEY_MAX_QUEUE_CAP );
-        
-        
+        if( maxQueueCapObj != UNDEFINED ) {
+            maxQueueCap = ( (Integer) maxQueueCapObj ).intValue();
+        }
+        ScriptableFunction onData = (ScriptableFunction) args[ 1 ];
+        ScriptableFunction onRegister = (ScriptableFunction) args[ 2 ];
+        ScriptableFunction onSimChange = (ScriptableFunction) args[ 3 ];
+        PushService.getInstance().openBISPushChannel( port, appId, serverUrl, wakeUpPage, maxQueueCap, onData, onRegister,
+                onSimChange );
         return UNDEFINED;
     }
 
@@ -75,7 +81,10 @@ public class OpenBISPushListenerFunction extends ScriptableFunctionBase {
             if( serverUrl == null || serverUrl == UNDEFINED ) {
                 throw new IllegalArgumentException( "serverUrl is missing." );
             }
-            
+            Object wakeUpPage = obj.getField( KEY_WAKEUP_PAGE );
+            if( wakeUpPage == null || wakeUpPage == UNDEFINED ) {
+                throw new IllegalArgumentException( "AppId is missing." );
+            }
         } catch( Exception e ) {
             throw new IllegalArgumentException( "Error retrieving arguments: " + e.getMessage() );
         }
@@ -86,7 +95,10 @@ public class OpenBISPushListenerFunction extends ScriptableFunctionBase {
      */
     protected FunctionSignature[] getFunctionSignatures() {
         FunctionSignature fs = new FunctionSignature( 4 );
-        
+        fs.addParam( Object.class, true );
+        fs.addParam( ScriptableFunction.class, true );
+        fs.addParam( ScriptableFunction.class, true );
+        fs.addParam( ScriptableFunction.class, true );
         return new FunctionSignature[] { fs };
     }
 

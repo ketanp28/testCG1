@@ -44,14 +44,21 @@ public final class PushExtension implements WidgetExtension {
             throws Exception {
         Object obj = null;
 
-        
+        if( feature.equals( FEATURE_NAME ) ) {
+            obj = new PushNamespace();
+        }
         if( obj != null ) {
             scriptEngine.addExtension( feature, obj );
         }
 
     }
 
-    
+    /**
+     * @see WidgetExtension#register(WidgetConfig, BrowserField)
+     */
+    public void register( final WidgetConfig widgetConfig, final BrowserField browserField ) {
+        // do nothing
+    }
 
     /**
      * @see WidgetExtension#unloadFeatures(Document)

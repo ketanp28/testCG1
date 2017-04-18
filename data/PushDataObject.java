@@ -93,7 +93,9 @@ public class PushDataObject extends Scriptable {
             return new GetHeaderFieldFunction();
         } else if( name.equals( FUNCTION_GET_REQUEST_URI ) ) {
             return new GetRequestURIFunction();
-        } 
+        } else if( name.equals( FUNCTION_GET_SOURCE ) ) {
+            return new GetSourceFunction();
+        }
 
         return super.getField( name );
     }
